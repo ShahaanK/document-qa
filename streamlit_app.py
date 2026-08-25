@@ -1,5 +1,5 @@
 import streamlit as st
-from openai import OpenAI
+from openai import OpenAI, AuthenticationError, APIError
 
 # Show title and description.
 st.title("My Document question answering")
@@ -19,35 +19,47 @@ else:
     # Create an OpenAI client.
     client = OpenAI(api_key=openai_api_key)
 
-    # Let the user upload a file via `st.file_uploader`.
-    uploaded_file = st.file_uploader(
-        "Upload a document (.txt or .md)", type=("txt", "md")
-    )
+    # Validate the API key before letting the user continue.
+    key_is_valid = False
+    try:
+        client.models.list()
+        key_is_valid = True
+    except AuthenticationError:
+        st.error("Invalid API key. Please check your OpenAI API key and try again.", icon="🚫")
+    except APIError as e:
+        st.error(f"Could not verify the API key: {e}", icon="⚠️")
 
-    # Ask the user for a question via `st.text_area`.
-    question = st.text_area(
-        "Now ask a question about the document!",
-        placeholder="Can you give me a short summary?",
-        disabled=not uploaded_file,
-    )
+    if key_is_valid:
 
-    if uploaded_file and question:
-
-        # Process the uploaded file and question.
-        document = uploaded_file.read().decode()
-        messages = [
-            {
-                "role": "user",
-                "content": f"Here's a document: {document} \n\n---\n\n {question}",
-            }
-        ]
-
-        # Generate an answer using the OpenAI API.
-        stream = client.chat.completions.create(
-            model="gpt-5-nano",
-            messages=messages,
-            stream=True,
+        # Let the user upload a file via `st.file_uploader`.
+        uploaded_file = st.file_uploader(
+            "Upload a document (.txt or .md)", type=("txt", "md")
         )
 
-        # Stream the response to the app using `st.write_stream`.
-        st.write_stream(stream)
+        # Ask the user for a question via `st.text_area`.
+        question = st.text_area(
+            "Now ask a question about the document!",
+            placeholder="Can you give me a short summary?",
+            disabled=not uploaded_file,
+        )
+
+        if uploaded_file and question:
+
+            # Process the uploaded file and question.
+            document = uploaded_file.read().decode()
+            messages = [
+                {
+                    "role": "user",
+                    "content": f"Here's a document: {document} \n\n---\n\n {question}",
+                }
+            ]
+
+            # Generate an answer using the OpenAI API.
+            stream = client.chat.completions.create(
+                model="gpt-5-nano",
+                messages=messages,
+                stream=True,
+            )
+
+            # Stream the response to the app using `st.write_stream`.
+            st.write_stream(stream)
