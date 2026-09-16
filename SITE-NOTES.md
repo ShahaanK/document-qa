@@ -17,6 +17,9 @@ present so Jekyll doesn't touch the raw HTML.
 
 To preview locally: `python3 -m http.server -d docs 8000`
 
+These notes live at the repo root rather than in `docs/` on purpose — anything
+inside `docs/` is served publicly once Pages is on.
+
 ## Before you share the link
 
 Three placeholders are deliberate — swap them:
