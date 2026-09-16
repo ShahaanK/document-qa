@@ -1,0 +1,780 @@
+<title>Verandah AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&display=swap">
+
+<style>
+  :root {
+    --ground: #E8EDEA;
+    --surface: #FFFFFF;
+    --surface-2: #F3F6F4;
+    --ink: #141D1A;
+    --ink-2: #46544F;
+    --ink-3: #6E7C77;
+    --rule: #CBD5D0;
+    --rule-soft: #DDE5E1;
+    --accent: #0E6B5E;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #D8E8E4;
+    /* accent that has to read on the inverted (--ink) bar, so it flips with the theme */
+    --accent-on-ink: #48C3AE;
+    --teak: #8A5E2B;
+    --teak-soft: #F1E5D4;
+    --caution: #8A5F0C;
+    --critical: #9E3122;
+    --shadow: 0 1px 2px rgba(20, 29, 26, .06), 0 12px 32px -18px rgba(20, 29, 26, .28);
+
+    --display: "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --body: "Newsreader", Georgia, "Times New Roman", serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0D1412;
+      --surface: #141D1A;
+      --surface-2: #1A2522;
+      --ink: #E8EFEC;
+      --ink-2: #A3B2AD;
+      --ink-3: #7C8A85;
+      --rule: #26332F;
+      --rule-soft: #1F2C28;
+      --accent: #3FB8A4;
+      --accent-ink: #06201C;
+      --accent-soft: #123A34;
+      --accent-on-ink: #0B5A4E;
+      --teak: #C79B63;
+      --teak-soft: #2E2318;
+      --caution: #D7A63C;
+      --critical: #E1715F;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 18px 40px -22px rgba(0, 0, 0, .8);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0D1412;
+    --surface: #141D1A;
+    --surface-2: #1A2522;
+    --ink: #E8EFEC;
+    --ink-2: #A3B2AD;
+    --ink-3: #7C8A85;
+    --rule: #26332F;
+    --rule-soft: #1F2C28;
+    --accent: #3FB8A4;
+    --accent-ink: #06201C;
+    --accent-soft: #123A34;
+    --accent-on-ink: #0B5A4E;
+    --teak: #C79B63;
+    --teak-soft: #2E2318;
+    --caution: #D7A63C;
+    --critical: #E1715F;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 18px 40px -22px rgba(0, 0, 0, .8);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  h1, h2, h3, h4, .ui { font-family: var(--display); }
+  h1, h2, h3 { text-wrap: balance; margin: 0; letter-spacing: -0.02em; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 0;
+  }
+
+  a { color: var(--accent); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+  /* ---------- top bar ---------- */
+  .topbar {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 30;
+    background: color-mix(in srgb, var(--ground) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--rule);
+  }
+  .topbar-in {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 58px;
+    flex-wrap: wrap;
+  }
+  .mark { display: flex; align-items: center; gap: 9px; text-decoration: none; color: var(--ink); }
+  .mark svg { display: block; }
+  .mark b { font-family: var(--display); font-size: 16px; font-weight: 700; letter-spacing: -0.01em; }
+  .mark span { font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; color: var(--ink-3); text-transform: uppercase; }
+  .topnav { margin-left: auto; display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+  .topnav a {
+    font-family: var(--display); font-size: 13.5px; font-weight: 500;
+    color: var(--ink-2); text-decoration: none;
+  }
+  .topnav a:hover { color: var(--ink); }
+  .theme-btn {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase;
+    background: transparent; color: var(--ink-3); border: 1px solid var(--rule);
+    padding: 5px 9px; border-radius: 2px; cursor: pointer;
+  }
+  .theme-btn:hover { color: var(--ink); border-color: var(--ink-3); }
+
+  /* ---------- live strip ---------- */
+  .live {
+    background: var(--ink);
+    color: var(--ground);
+    border-bottom: 1px solid var(--rule);
+  }
+  .live-in {
+    display: flex; align-items: baseline; gap: 10px 22px; flex-wrap: wrap;
+    padding-block: 11px;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .02em;
+  }
+  .live .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent-on-ink); flex: none; align-self: center;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-on-ink) 28%, transparent);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+  @media (prefers-reduced-motion: reduce) { .live .dot { animation: none; } }
+  .live strong { font-weight: 600; }
+  .live .sep { opacity: .5; }
+  #clock { font-variant-numeric: tabular-nums; color: var(--accent-on-ink); font-weight: 600; }
+
+  /* ---------- hero ---------- */
+  .hero { padding-block: 62px 56px; border-bottom: 1px solid var(--rule); }
+  .hero-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 52px; align-items: start; }
+  @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; gap: 38px; } .hero { padding-block: 40px; } }
+
+  h1 {
+    font-size: clamp(34px, 6.2vw, 62px);
+    line-height: 1.02;
+    font-weight: 700;
+    margin-top: 18px;
+  }
+  h1 em { font-family: var(--body); font-style: italic; font-weight: 400; letter-spacing: -0.01em; color: var(--accent); }
+  .lede {
+    font-size: clamp(18px, 2.1vw, 21px);
+    color: var(--ink-2);
+    max-width: 34em;
+    margin: 22px 0 0;
+  }
+  .cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+  .btn {
+    font-family: var(--display); font-size: 14.5px; font-weight: 600;
+    text-decoration: none; padding: 13px 20px; border-radius: 3px;
+    display: inline-flex; align-items: center; gap: 9px; border: 1px solid transparent;
+  }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn-ghost { border-color: var(--rule); color: var(--ink); background: var(--surface); }
+  .btn-ghost:hover { border-color: var(--ink-3); }
+
+  /* spec card in hero */
+  .spec {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .spec-head {
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--surface-2);
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  }
+  .spec dl { margin: 0; }
+  .spec-row {
+    display: grid; grid-template-columns: 96px minmax(0, 1fr);
+    gap: 14px; padding: 13px 18px;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .spec-row:last-child { border-bottom: 0; }
+  .spec-row dt {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--ink-3); padding-top: 3px;
+  }
+  .spec-row dd { margin: 0; font-family: var(--display); font-size: 14.5px; line-height: 1.45; }
+  .spec-row dd small { display: block; font-family: var(--body); font-size: 14px; color: var(--ink-2); margin-top: 2px; }
+  .tag {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+    padding: 3px 7px; border-radius: 2px; background: var(--accent-soft); color: var(--accent);
+    white-space: nowrap;
+  }
+  .tag-teak { background: var(--teak-soft); color: var(--teak); }
+
+  /* ---------- generic section ---------- */
+  section { border-bottom: 1px solid var(--rule); }
+  .sec { padding-block: 58px; }
+  @media (max-width: 860px) { .sec { padding-block: 42px; } }
+  .sec-head { max-width: 40em; margin-bottom: 38px; }
+  .sec-head h2 { font-size: clamp(25px, 3.4vw, 36px); line-height: 1.12; font-weight: 600; margin-top: 12px; }
+  .sec-head p { color: var(--ink-2); margin: 16px 0 0; max-width: 34em; }
+
+  /* ---------- pressure table ---------- */
+  .tbl-scroll { overflow-x: auto; }
+  table.facts { width: 100%; border-collapse: collapse; min-width: 520px; }
+  table.facts th, table.facts td { text-align: left; padding: 15px 16px 15px 0; border-bottom: 1px solid var(--rule-soft); vertical-align: top; }
+  table.facts thead th {
+    font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 500; border-bottom: 1px solid var(--rule); padding-bottom: 10px;
+  }
+  table.facts td.num {
+    font-family: var(--mono); font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums;
+    color: var(--teak); white-space: nowrap; width: 1%; padding-right: 26px;
+  }
+  table.facts td.what { font-family: var(--display); font-size: 14.5px; font-weight: 500; width: 34%; }
+  table.facts td.so { color: var(--ink-2); font-size: 16px; }
+  sup.ref { font-family: var(--mono); font-size: 9px; color: var(--ink-3); margin-left: 3px; }
+
+  /* ---------- pipeline rail ---------- */
+  .rail { display: grid; gap: 0; }
+  .stage {
+    display: grid;
+    grid-template-columns: 62px minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: 10px 26px;
+    padding-block: 26px;
+    border-top: 1px solid var(--rule-soft);
+    align-items: start;
+  }
+  .stage:first-child { border-top: 1px solid var(--rule); }
+  .stage-n {
+    font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--accent);
+    letter-spacing: .06em; padding-top: 4px;
+    position: relative;
+  }
+  .stage-n::after {
+    content: ""; position: absolute; left: 4px; top: 30px; bottom: -34px;
+    width: 1px; background: var(--rule);
+  }
+  .stage:last-child .stage-n::after { display: none; }
+  .stage h3 { font-size: 20px; font-weight: 600; }
+  .stage h3 + p { margin: 8px 0 0; color: var(--ink-2); font-size: 16px; }
+  .stage-out { display: flex; flex-direction: column; gap: 9px; padding-top: 3px; }
+  .out {
+    display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 10px;
+    font-family: var(--display); font-size: 14px; line-height: 1.5; color: var(--ink);
+  }
+  .out i {
+    font-style: normal; color: var(--accent); font-family: var(--mono); font-size: 13px; line-height: 1.45;
+  }
+  .out code { font-family: var(--mono); font-size: 12.5px; background: var(--surface-2); padding: 1px 5px; border-radius: 2px; color: var(--teak); }
+  @media (max-width: 760px) {
+    .stage { grid-template-columns: 40px minmax(0, 1fr); }
+    .stage-out { grid-column: 2; padding-top: 12px; }
+    .stage-n::after { display: none; }
+  }
+
+  /* ---------- audience ---------- */
+  .who { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 3px; }
+  .who > div { background: var(--surface); padding: 22px 20px 24px; }
+  .who h4 { font-size: 16.5px; font-weight: 600; margin: 10px 0 0; }
+  .who p { margin: 9px 0 0; font-size: 15.5px; color: var(--ink-2); }
+  .who .floor { font-family: var(--mono); font-size: 10px; letter-spacing: .11em; text-transform: uppercase; color: var(--ink-3); }
+
+  /* ---------- pilot ---------- */
+  .pilot { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 46px; align-items: start; }
+  @media (max-width: 860px) { .pilot { grid-template-columns: 1fr; gap: 32px; } }
+  ol.days { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+  ol.days li {
+    display: grid; grid-template-columns: 108px minmax(0, 1fr); gap: 18px;
+    padding-block: 16px; border-top: 1px solid var(--rule-soft);
+  }
+  ol.days li:first-child { border-top: 1px solid var(--rule); }
+  ol.days .when { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); padding-top: 3px; }
+  ol.days .what { font-family: var(--display); font-size: 15px; font-weight: 500; }
+  ol.days .what small { display: block; font-family: var(--body); font-size: 15px; font-weight: 400; color: var(--ink-2); margin-top: 3px; }
+  @media (max-width: 520px) { ol.days li { grid-template-columns: 1fr; gap: 4px; } }
+
+  .terms { background: var(--surface); border: 1px solid var(--rule); border-radius: 3px; padding: 24px 22px; box-shadow: var(--shadow); }
+  .terms h3 { font-size: 18px; font-weight: 600; }
+  .terms ul { margin: 16px 0 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+  .terms li { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: 10px; font-size: 15.5px; color: var(--ink-2); }
+  .terms li i { font-style: normal; color: var(--accent); font-family: var(--mono); font-size: 13px; }
+  .terms li b { color: var(--ink); font-family: var(--display); font-size: 14.5px; font-weight: 600; }
+
+  /* ---------- founders ---------- */
+  .founders { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 26px; }
+  .founder { border-top: 2px solid var(--ink); padding-top: 18px; }
+  .founder h3 { font-size: 21px; font-weight: 600; }
+  .founder .role { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-top: 6px; }
+  .founder p { margin: 12px 0 0; color: var(--ink-2); font-size: 15.5px; }
+
+  /* ---------- contact ---------- */
+  .contact { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 44px; align-items: start; }
+  @media (max-width: 860px) { .contact { grid-template-columns: 1fr; gap: 30px; } }
+  .contact h2 { font-size: clamp(26px, 3.6vw, 38px); font-weight: 600; line-height: 1.1; }
+  .reach { display: grid; gap: 0; }
+  .reach a, .reach div.r {
+    display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 16px;
+    padding-block: 15px; border-top: 1px solid var(--rule-soft);
+    text-decoration: none; color: var(--ink);
+  }
+  .reach a:first-child, .reach div.r:first-child { border-top: 1px solid var(--rule); }
+  .reach a:hover { background: var(--surface-2); }
+  .reach .k { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); padding-top: 4px; }
+  .reach .v { font-family: var(--display); font-size: 16px; font-weight: 500; overflow-wrap: anywhere; }
+  .reach .v small { display: block; font-family: var(--body); font-size: 14.5px; font-weight: 400; color: var(--ink-3); margin-top: 2px; }
+
+  footer { padding-block: 34px 44px; }
+  .notes { font-size: 13.5px; color: var(--ink-3); max-width: 62em; }
+  .notes h4 { font-family: var(--mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 10px; font-weight: 500; }
+  .notes ol { margin: 0; padding-left: 20px; display: grid; gap: 5px; }
+  .notes a { color: var(--ink-2); }
+  .foot-rule { border-top: 1px solid var(--rule); margin-top: 28px; padding-top: 18px; display: flex; gap: 14px; flex-wrap: wrap; justify-content: space-between; font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+</style>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="mark" href="#top">
+      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
+        <path d="M3 9.5 C3 4.8 7.4 2 13 2 C18.6 2 23 4.8 23 9.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"></path>
+        <rect x="4" y="13" width="18" height="1.8" rx=".6" fill="currentColor"></rect>
+        <rect x="4" y="17.2" width="18" height="1.8" rx=".6" fill="currentColor" opacity=".62"></rect>
+        <rect x="4" y="21.4" width="18" height="1.8" rx=".6" fill="currentColor" opacity=".32"></rect>
+      </svg>
+      <span style="display:flex;flex-direction:column;line-height:1.15">
+        <b>Verandah AI</b>
+        <span>End-to-end for casual furnishings</span>
+      </span>
+    </a>
+    <nav class="topnav">
+      <a href="#pressure">The squeeze</a>
+      <a href="#spine">The spine</a>
+      <a href="#pilot">14-day pilot</a>
+      <a href="#founders">Founders</a>
+      <button class="theme-btn ui" id="themeBtn" type="button">Theme</button>
+    </nav>
+  </div>
+</header>
+
+<div class="live" id="top">
+  <div class="wrap live-in">
+    <span class="dot" aria-hidden="true"></span>
+    <span><strong>We're on the floors this week.</strong> Casual Market Atlanta, AmericasMart.</span>
+    <span class="sep" aria-hidden="true">/</span>
+    <span id="clockLine">Tonight: ICFA Awards Gala, Hyatt Regency Atlanta. <span id="clock">Market closes Friday, Sept 18.</span></span>
+  </div>
+</div>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow">Sept 15&ndash;18, 2026 &middot; AmericasMart Bldg 1 &middot; Floors 2&ndash;8</p>
+        <h1>Your line is built for 20 seasons outdoors. Your <em>order data</em> falls apart in one.</h1>
+        <p class="lede">
+          Verandah AI builds one end-to-end system for the casual furnishings trade &mdash;
+          HTS code to landed cost, line sheet to variant matrix, showroom quote to promised
+          ship week, and the replacement sling four years later. One data spine. One team that owns it.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#contact">Book 20 minutes before Friday <span aria-hidden="true">&rarr;</span></a>
+          <a class="btn btn-ghost" href="#pilot">See the 14-day pilot</a>
+        </div>
+      </div>
+
+      <div class="spec">
+        <div class="spec-head">
+          <p class="eyebrow">Market week brief</p>
+          <span class="tag">Open now</span>
+        </div>
+        <dl>
+          <div class="spec-row">
+            <dt>Market</dt>
+            <dd>Casual Market Atlanta<small>Presented by ICFA, co-produced by ANDMORE</small></dd>
+          </div>
+          <div class="spec-row">
+            <dt>Dates</dt>
+            <dd>September 15&ndash;18, 2026<small>Permanent showrooms floors 2&ndash;6; temporary exhibitors floors 7&ndash;8</small></dd>
+          </div>
+          <div class="spec-row">
+            <dt>Tonight</dt>
+            <dd>ICFA Awards Gala<small>Hyatt Regency Atlanta &mdash; Design Excellence &amp; Apollo Awards, Old Hollywood Glamour</small></dd>
+          </div>
+          <div class="spec-row">
+            <dt>Us</dt>
+            <dd>Not exhibiting &mdash; walking<small>Two founders, a notebook, and a lot of questions about your order desk. Find us at the gala or reply to set a time.</small></dd>
+          </div>
+          <div class="spec-row">
+            <dt>Ask</dt>
+            <dd><span class="tag tag-teak">One line sheet</span><small>Hand us a current line sheet or price list. We'll show you what our pipeline does with it.</small></dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section id="pressure">
+    <div class="wrap sec">
+      <div class="sec-head">
+        <p class="eyebrow">01 &middot; Why this year</p>
+        <h2>Nobody in this building needs another dashboard. The margin is leaking upstream of the dashboard.</h2>
+        <p>
+          Every pressure on this industry right now is a <em>data</em> problem wearing a logistics costume.
+          You cannot re-route sourcing, re-price a program, or hold a promised ship date on a catalog
+          that lives in eleven spreadsheets and a rep's memory.
+        </p>
+      </div>
+      <div class="tbl-scroll">
+        <table class="facts">
+          <thead>
+            <tr><th scope="col">Figure</th><th scope="col">What it is</th><th scope="col">What it does to your order desk</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="num">25%</td>
+              <td class="what">Ad valorem tariff applied to certain furniture categories since Oct 14, 2025<sup class="ref">1</sup></td>
+              <td class="so">Landed cost now depends on HTS classification per SKU &mdash; and most line sheets don't carry one. Misclassify a frame and the duty math is wrong on every quote built from it.</td>
+            </tr>
+            <tr>
+              <td class="num">145%</td>
+              <td class="what">Peak punitive rate on Chinese goods that pushed firms to hoard and re-route sourcing<sup class="ref">1</sup></td>
+              <td class="so">Re-sourcing a frame to Vietnam or Mexico means re-costing every finish, sling and cushion combination it appears in. By hand, that's a quarter. It should be an afternoon.</td>
+            </tr>
+            <tr>
+              <td class="num">&minus;4.3%</td>
+              <td class="what">Year-over-year drop in U.S. furniture import volume, May 2025, after a 25.6% front-load surge in April<sup class="ref">1</sup></td>
+              <td class="so">Whiplash buying. Front-loaded containers became warehouse cost, and the pre-season buy you'd normally forecast off last year's sell-through is now forecast off an anomaly.</td>
+            </tr>
+            <tr>
+              <td class="num">7</td>
+              <td class="what">Floors of showrooms and temporaries a buyer walks at this market<sup class="ref">2</sup></td>
+              <td class="so">Your rep gets one conversation. If the quote takes three days and a follow-up email to produce, the order goes to whoever quoted it on the floor.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="spine">
+    <div class="wrap sec">
+      <div class="sec-head">
+        <p class="eyebrow">02 &middot; The spine</p>
+        <h2>Five stages, one system. This is what &ldquo;end-to-end&rdquo; actually has to mean.</h2>
+        <p>
+          Point tools each solve a slice and then hand you an integration bill. We build the
+          whole lifecycle on one product model, so a fabric grade change in stage 02 re-prices
+          stage 03, re-forecasts stage 04, and still resolves a parts claim in stage 05.
+        </p>
+      </div>
+
+      <div class="rail">
+        <article class="stage">
+          <p class="stage-n">01</p>
+          <div>
+            <h3>Source</h3>
+            <p>Tariff and landed-cost intelligence, per SKU, per origin, per scenario.</p>
+          </div>
+          <div class="stage-out">
+            <p class="out"><i>&rsaquo;</i><span>HTS classification proposed for every line on your price list, with the reasoning shown</span></p>
+            <p class="out"><i>&rsaquo;</i><span>Duty + ocean freight + drayage modeled to <code>LDP</code> from your real <code>FOB</code> terms</span></p>
+            <p class="out"><i>&rsaquo;</i><span>&ldquo;Move this frame program to Vietnam&rdquo; &mdash; full re-cost across every variant in minutes</span></p>
+          </div>
+        </article>
+
+        <article class="stage">
+          <p class="stage-n">02</p>
+          <div>
+            <h3>Catalog</h3>
+            <p>The unglamorous one that makes the other four possible.</p>
+          </div>
+          <div class="stage-out">
+            <p class="out"><i>&rsaquo;</i><span>A 4,000-line sheet becomes a clean variant matrix: frame finish &times; sling &times; <code>COM/COL</code> grade &times; cushion</span></p>
+            <p class="out"><i>&rsaquo;</i><span>Dimensions, weights, cartons, freight class and care specs normalized &mdash; not retyped</span></p>
+            <p class="out"><i>&rsaquo;</i><span>Imagery and 3D assets tagged to the exact configuration they depict, so nothing ships against the wrong photo</span></p>
+          </div>
+        </article>
+
+        <article class="stage">
+          <p class="stage-n">03</p>
+          <div>
+            <h3>Sell</h3>
+            <p>Configure, price and quote &mdash; standing up, on a showroom floor, in under a minute.</p>
+          </div>
+          <div class="stage-out">
+            <p class="out"><i>&rsaquo;</i><span>A twelve-piece deep-seating group priced with the right fabric grade, program discount and freight rule</span></p>
+            <p class="out"><i>&rsaquo;</i><span>Guided selling in plain language: &ldquo;coastal, full sun, needs to seat nine&rdquo; &rarr; three real, in-stock configurations</span></p>
+            <p class="out"><i>&rsaquo;</i><span>Retailer-specific price lists and regional terms respected automatically &mdash; no rep math, no margin surprises</span></p>
+          </div>
+        </article>
+
+        <article class="stage">
+          <p class="stage-n">04</p>
+          <div>
+            <h3>Fulfill</h3>
+            <p>Promise dates that hold, and a pre-season buy you can defend.</p>
+          </div>
+          <div class="stage-out">
+            <p class="out"><i>&rsaquo;</i><span>Lead times forecast from your actual vendor and container history, not a flat 12&ndash;16 weeks</span></p>
+            <p class="out"><i>&rsaquo;</i><span>Pre-season buy recommendations by climate zone and store &mdash; Phoenix and Minneapolis are not the same season</span></p>
+            <p class="out"><i>&rsaquo;</i><span>Container-level exposure: what's on the water, what it costs to hold, what slips if it's late</span></p>
+          </div>
+        </article>
+
+        <article class="stage">
+          <p class="stage-n">05</p>
+          <div>
+            <h3>Service</h3>
+            <p>The part of outdoor furniture that lasts twenty seasons &mdash; and generates tickets for all twenty.</p>
+          </div>
+          <div class="stage-out">
+            <p class="out"><i>&rsaquo;</i><span>Customer sends a photo of a 2019 sling chair; the agent identifies the program and the replacement sling SKU</span></p>
+            <p class="out"><i>&rsaquo;</i><span>Warranty claims triaged against the original configuration, not a guess</span></p>
+            <p class="out"><i>&rsaquo;</i><span>Cushions, glass tops, umbrella canopies and hardware &mdash; the long tail that eats a service desk</span></p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="who">
+    <div class="wrap sec">
+      <div class="sec-head">
+        <p class="eyebrow">03 &middot; Who's in the building</p>
+        <h2>We optimize for the four badges walking these floors.</h2>
+        <p>ICFA represents manufacturers, retailers, sales representatives and designers of outdoor furnishings, plus the suppliers behind them. Each one breaks at a different point in the spine.</p>
+      </div>
+      <div class="who">
+        <div>
+          <p class="floor">Floors 2&ndash;6 &middot; Permanent</p>
+          <h4>Manufacturers &amp; suppliers</h4>
+          <p>You own the product model and the tariff exposure. Start at stages 01&ndash;02: get your catalog clean and your landed cost live, and every dealer downstream inherits it.</p>
+        </div>
+        <div>
+          <p class="floor">Buyers &middot; Multi-store</p>
+          <h4>Retailers &amp; buyers</h4>
+          <p>You're committing a pre-season buy against a whiplashed year. Stages 03&ndash;04: quote on the floor, forecast by store and climate, stop hedging with warehouse space.</p>
+        </div>
+        <div>
+          <p class="floor">Reps &middot; Multi-line agencies</p>
+          <h4>Sales reps &amp; agencies</h4>
+          <p>You carry eight lines and eight price structures. One configurator across all of them, working offline in a showroom with bad reception.</p>
+        </div>
+        <div>
+          <p class="floor">Floors 7&ndash;8 &middot; Temporary</p>
+          <h4>Designers &amp; specifiers</h4>
+          <p>You need specs that survive a client presentation. Real dimensions, real fabrics, real availability &mdash; generated from the manufacturer's data, not scraped from a PDF.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pilot">
+    <div class="wrap sec">
+      <div class="sec-head">
+        <p class="eyebrow">04 &middot; The offer</p>
+        <h2>Hand us a line sheet at market. Get a working system back before October.</h2>
+        <p>We don't sell discovery phases. Market week is the discovery phase &mdash; you're already here, and so are we.</p>
+      </div>
+      <div class="pilot">
+        <ol class="days">
+          <li>
+            <span class="when">This week</span>
+            <span class="what">Twenty minutes, in person<small>At the gala tonight, on the floors Thursday, or over coffee before Friday close. Bring the line sheet and the one workflow that hurts most.</small></span>
+          </li>
+          <li>
+            <span class="when">Days 1&ndash;4</span>
+            <span class="what">Catalog normalization<small>Your line sheet becomes a structured variant matrix with finishes, fabric grades, cartons and freight class. You see exactly what was ambiguous in the source.</small></span>
+          </li>
+          <li>
+            <span class="when">Days 5&ndash;9</span>
+            <span class="what">Landed cost + quoting<small>HTS classification proposals and a duty/freight model wired to a live quoting surface for one product family.</small></span>
+          </li>
+          <li>
+            <span class="when">Days 10&ndash;14</span>
+            <span class="what">Your reps use it<small>Two or three of your people quote real configurations against it. We sit in, watch it break, and fix it.</small></span>
+          </li>
+          <li>
+            <span class="when">Day 14</span>
+            <span class="what">Keep it or kill it<small>A working pilot and an honest read on what a full rollout costs. No obligation either way.</small></span>
+          </li>
+        </ol>
+
+        <aside class="terms">
+          <h3>Terms, plainly</h3>
+          <ul>
+            <li><i>&mdash;</i><span><b>No fee for the pilot.</b> We're building a reference set in this category and we'd rather earn it than pitch it.</span></li>
+            <li><i>&mdash;</i><span><b>Your data stays yours.</b> Line sheets, price lists and dealer terms are used for your pilot only. No training on your catalog, no sharing with competitors on the same floor.</span></li>
+            <li><i>&mdash;</i><span><b>We work against your stack.</b> Whatever ERP, PIM or order desk you already run &mdash; we integrate into it rather than asking you to replace it mid-season.</span></li>
+            <li><i>&mdash;</i><span><b>Two founders, no handoff.</b> The people you meet at the gala are the people who build it.</span></li>
+            <li><i>&mdash;</i><span><b>Capacity: four pilots from this market.</b> That's what two people can do properly between now and the January showroom openings.</span></li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section id="founders">
+    <div class="wrap sec">
+      <div class="sec-head">
+        <p class="eyebrow">05 &middot; Who you'd be working with</p>
+        <h2>Co-founders. Both of us on every pilot.</h2>
+      </div>
+      <div class="founders">
+        <div class="founder">
+          <h3>Shahaan Khan</h3>
+          <p class="role">Co-founder</p>
+          <p>
+            Works the data spine: catalog normalization, product modeling, and the retrieval and
+            document-understanding layer that turns a price list PDF into something a quoting
+            engine can actually price against.
+          </p>
+        </div>
+        <div class="founder">
+          <h3>Ahmed Meshhood</h3>
+          <p class="role">Co-founder</p>
+          <p>
+            Works the operational edge: landed cost and tariff modeling, lead-time and container
+            forecasting, and putting the whole thing in front of reps and order desks until it
+            survives a real showroom floor.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap sec">
+      <div class="contact">
+        <div>
+          <p class="eyebrow">06 &middot; Before Friday</p>
+          <h2>Market closes Friday. The pre-season buy doesn't wait for a procurement cycle.</h2>
+          <p style="color:var(--ink-2);margin:18px 0 0;max-width:32em">
+            Reply with a time and a floor and we'll come to you. If you'd rather just test us:
+            send one line sheet and one sentence about what breaks, and we'll send back what our
+            pipeline makes of it &mdash; before you fly home.
+          </p>
+        </div>
+        <div class="reach">
+          <a href="mailto:hello@verandah.ai?subject=Casual%20Market%20Atlanta%20%E2%80%94%2020%20minutes">
+            <span class="k">Email</span>
+            <span class="v">hello@verandah.ai<small>Fastest route. We're answering between showrooms.</small></span>
+          </a>
+          <a href="tel:+10000000000">
+            <span class="k">Phone</span>
+            <span class="v">Add your number<small>Replace before sharing this page.</small></span>
+          </a>
+          <div class="r">
+            <span class="k">Tonight</span>
+            <span class="v">ICFA Awards Gala<small>Hyatt Regency Atlanta. Look for the two people asking about your order desk instead of your cushions.</small></span>
+          </div>
+          <div class="r">
+            <span class="k">Thu&ndash;Fri</span>
+            <span class="v">Floors 7&ndash;8, then 2&ndash;6<small>AmericasMart Building 1. Message us and we'll find your showroom.</small></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <div class="notes">
+    <h4>Sources &amp; notes</h4>
+    <ol>
+      <li>
+        Tariff and import-volume figures: U.S. outdoor furniture manufacturing and furniture
+        industry trade reporting, 2025&ndash;2026 &mdash;
+        <a href="https://www.ibisworld.com/united-states/industry/outdoor-furniture-manufacturing/4821/">IBISWorld, Outdoor Furniture Manufacturing in the US</a>;
+        <a href="https://myhfa.org/blog/2026-is-a-pivotal-year-for-furniture-advocacy/">Home Furnishings Association</a>.
+      </li>
+      <li>
+        Market format, dates, floors and ICFA Awards Gala venue &mdash;
+        <a href="https://www.icfanet.org/events/fall-casual-market-2026/">ICFA, Fall Casual Market 2026</a>;
+        <a href="https://casualmarketatlanta.com/fall-casual-market-atlanta/">Casual Market Atlanta</a>;
+        <a href="https://www.andmore.com/news/casual-market-atlanta-previews-full-programming-lineup-and-buyer-amenities-ahead-of-fall-2026-market">ANDMORE programming preview</a>.
+      </li>
+      <li>
+        Verandah AI is an independent company. It is not affiliated with, endorsed by, or
+        sponsored by the International Casual Furnishings Association, ANDMORE, AmericasMart,
+        or Hyatt. Conference details are cited for context only.
+      </li>
+    </ol>
+  </div>
+  <div class="foot-rule">
+    <span>Verandah AI &middot; End-to-end AI for casual furnishings</span>
+    <span>Atlanta, September 2026</span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var btn = document.getElementById("themeBtn");
+
+    function stored() {
+      try { return localStorage.getItem("verandah-theme"); } catch (e) { return null; }
+    }
+    var saved = stored();
+    if (saved === "dark" || saved === "light") root.setAttribute("data-theme", saved);
+
+    btn.addEventListener("click", function () {
+      var current = root.getAttribute("data-theme");
+      if (!current) {
+        var systemDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        current = systemDark ? "dark" : "light";
+      }
+      var next = current === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      try { localStorage.setItem("verandah-theme", next); } catch (e) {}
+    });
+  })();
+
+  (function () {
+    // Fall Casual Market Atlanta: Sept 15-18, 2026. Counts down to Friday close (ET).
+    var close = new Date("2026-09-18T17:00:00-04:00").getTime();
+    var gala = new Date("2026-09-17T02:00:00-04:00").getTime(); // end of Wed Sept 16 gala evening
+    var clock = document.getElementById("clock");
+    var line = document.getElementById("clockLine");
+    if (!clock || !line) return;
+
+    function tick() {
+      var now = Date.now();
+      var left = close - now;
+
+      if (left <= 0) {
+        line.innerHTML = 'Market’s closed for the season. <span id="clock">Pick it up from here — same offer, same two founders.</span>';
+        return;
+      }
+
+      var d = Math.floor(left / 86400000);
+      var h = Math.floor((left % 86400000) / 3600000);
+      var m = Math.floor((left % 3600000) / 60000);
+      var parts = (d > 0 ? d + "d " : "") + h + "h " + m + "m";
+      var prefix = now < gala
+        ? "Tonight: ICFA Awards Gala, Hyatt Regency Atlanta."
+        : "Still on the floors.";
+
+      line.innerHTML = prefix + " Market closes in <span id=\"clock\">" + parts + "</span>";
+      clock = document.getElementById("clock");
+    }
+
+    tick();
+    setInterval(tick, 30000);
+  })();
+</script>
